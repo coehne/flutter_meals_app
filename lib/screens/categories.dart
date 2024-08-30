@@ -1,15 +1,24 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+
 import 'package:flutter_meals_app/data/dummy_data.dart';
 import 'package:flutter_meals_app/models/category.dart';
+import 'package:flutter_meals_app/models/meal.dart';
 import 'package:flutter_meals_app/screens/meals.dart';
 import 'package:flutter_meals_app/widgets/grid_item.dart';
 
 class CategoriesScreen extends StatelessWidget {
-  const CategoriesScreen({super.key});
+  const CategoriesScreen({
+    super.key,
+    required this.onToggleFavorite,
+  });
+
+  final void Function(Meal meal) onToggleFavorite;
 
   void _selectCategory(BuildContext context, Category category) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (ctx) => MealsScreen(
+            onToggleFavorite: onToggleFavorite,
             title: category.title,
             meals: dummyMeals
                 .where((meal) => meal.categories.contains(category.id))
@@ -18,25 +27,21 @@ class CategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text("Pick your Category"),
-        ),
-        body: GridView(
-          padding: const EdgeInsets.all(20),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 3 / 2,
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 20),
-          children: [
-            for (final category in availableCategories)
-              CategoryGridItem(
-                  category: category,
-                  onTap: () {
-                    _selectCategory(context, category);
-                  }),
-          ],
-        ));
+    return GridView(
+      padding: const EdgeInsets.all(20),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 3 / 2,
+          crossAxisSpacing: 20,
+          mainAxisSpacing: 20),
+      children: [
+        for (final category in availableCategories)
+          CategoryGridItem(
+              category: category,
+              onTap: () {
+                _selectCategory(context, category);
+              }),
+      ],
+    );
   }
 }
